@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../hashing/sha256.h"
+#include "../utils/utils.h"
 
 #define KEY_LENGTH	(32)
 
@@ -23,7 +24,7 @@ typedef struct HashTable {
 HTNode* HTNodeConstructor(const uint8_t* key, const char* value);
 HashTable* HTConstructor(const size_t capacity);
 size_t getIndex(const uint8_t* hash, const size_t HTCapacity);
-void* HTInsert(HashTable* hashTable, const uint8_t* key, const char* value);
+void* HTInsert(HashTable* hashTable, const uint8_t* key, const char* value, int forceReplace);
 void* HTRemove(HashTable* hashTable, const uint8_t* key);
 void* HTGet(const HashTable* hashTable, const uint8_t* key);
 void HTNodeDestructor(HTNode* node);

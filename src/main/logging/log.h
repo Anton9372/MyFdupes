@@ -7,7 +7,7 @@
 
 #define MAX_BUFFER_LENGTH   (1024)
 
-const char* logFileName = "/home/anton/study/MyFdupes/log.txt";
+#define LOG_FILE_NAME "/home/anton/study/MyFdupes/log.txt"
 
 enum LOG_LEVEL {
     FATAL_ = 0,

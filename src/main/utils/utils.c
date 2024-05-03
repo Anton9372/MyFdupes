@@ -33,3 +33,24 @@ void deleteFile(const char* filePath) {
     }
 }
 
+void replaceFileWithHardLink(const char* pathToFile, const char* pathToFileDuplicate, int forceReplace) {
+    if(forceReplace == DISABLE_) {
+        printf("File duplicate found:\n");
+        printf("    Original file: %s\n", pathToFile);
+        printf("    Duplicate file: %s\n", pathToFileDuplicate);
+
+        char option;
+        do {
+            printf("    Replace duplicate file with hard link? (y/n)\n");
+            scanf(" %c", &option);
+        } while(option != 'y' && option != 'n');
+        
+        if(option == 'n') {
+            return;
+        }
+    }
+
+    deleteFile(pathToFileDuplicate);
+
+    createHardLink(pathToFile, pathToFileDuplicate);
+}

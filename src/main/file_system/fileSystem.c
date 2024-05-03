@@ -1,12 +1,13 @@
 #include "fileSystem.h"
 
-void processDirectory(HashTable* hashTable, const char* pathToDirectory) {
-    if(hashTable == NULL) {
+void processDirectory(HashTable* hashTable, const Options* options) {
+    if(hashTable == NULL || options == NULL) {
         return;
     }
 
-    DIR* directory = opendir(pathToDirectory);
+    DIR* directory = opendir(options->directoryPath);
     if(directory == NULL) {
+        logMessage(ERROR_, "Error opening directory: %s\n", options->directoryPath);
         return;
     }
 
@@ -21,24 +22,34 @@ void processDirectory(HashTable* hashTable, const char* pathToDirectory) {
             return;
         }
 
-        snprintf(entryPath, strlen(entryPath), "%s/%s", pathToDirectory, dirEntry->d_name);
+        snprintf(entryPath, MAX_BUFFER_LEN, "%s/%s", options->directoryPath, dirEntry->d_name);
 
         struct stat st;
         if (stat(entryPath, &st) == -1) {
             continue;
         }
 
-        if (S_ISDIR(st.st_mode)) {
-            processDirectory(hashTable, entryPath);
+        if (S_ISDIR(st.st_mode) && (options->recurceIntoDirectory == ENABLE_)) {
+            Options* subDirOptions = optionsCopyConstructor(options);
+            if(subDirOptions == NULL) {
+                free(entryPath);
+                continue;
+            }
+
+            subDirOptions->directoryPath = entryPath;
+            processDirectory(hashTable, subDirOptions);
+            optionsDestructor(subDirOptions);
         } else if (S_ISREG(st.st_mode)) {
-            
+            processFile(hashTable, entryPath, options->deleteEmptyFiles, options->forceReplace);
         }
+
+        free(entryPath);
     }
 
     closedir(directory);
 }
 
-void processFile(HashTable* hashTable, const char* pathToFile) {
+void processFile(HashTable* hashTable, const char* pathToFile, int deleteEmptyFiles, int forceReplace) {
     FILE* file = fopen(pathToFile, "r");
     if(file == NULL) {
         return;
@@ -49,7 +60,12 @@ void processFile(HashTable* hashTable, const char* pathToFile) {
     fseek(file, 0, SEEK_SET);
 
     if(fileSize == 0) {
-        logMessage(INFO_, "File was skipped because empty: %s\n", pathToFile);
+        if(deleteEmptyFiles == DISABLE_) {
+            logMessage(INFO_, "File was skipped because empty: %s\n", pathToFile);
+        } else {
+            deleteFile(pathToFile);
+            logMessage(INFO_, "File was deleted because empty: %s\n", pathToFile);
+        }
         return;
     }
 
@@ -62,11 +78,10 @@ void processFile(HashTable* hashTable, const char* pathToFile) {
 
     while(fread(buffer, sizeof(char), sizeof(buffer), file)) {
         addBufferHash(controlSum, buffer);
-
     }
 
     uint8_t* fileHash = getControlSum(controlSum);
-    HTInsert(hashTable, fileHash, pathToFile);
+    HTInsert(hashTable, fileHash, pathToFile, forceReplace);
 
     controlSumDestructor(controlSum);
     free(buffer);

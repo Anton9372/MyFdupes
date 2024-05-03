@@ -1,7 +1,7 @@
 #include "log.h"
 
 void logMessage(int logLevel, const char* format, ...) {
-    FILE* logFile = fopen(logFileName, "a");
+    FILE* logFile = fopen(LOG_FILE_NAME, "a");
     if(logFile == NULL) {
         return;
     }

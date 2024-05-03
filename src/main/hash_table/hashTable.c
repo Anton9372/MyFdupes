@@ -68,7 +68,7 @@ size_t getIndex(const uint8_t* key, const size_t HTCapacity) {
 	return index % HTCapacity;
 }
 
-void* HTInsert(HashTable* hashTable, const uint8_t* key, const char* value) {
+void* HTInsert(HashTable* hashTable, const uint8_t* key, const char* value, int forceReplace) {
 	if (hashTable == NULL || key == NULL || value == NULL) {
 		return NULL;
 	}
@@ -78,17 +78,8 @@ void* HTInsert(HashTable* hashTable, const uint8_t* key, const char* value) {
 
 	for (node; node != NULL; node = node->next) {
 		if (memcmp(node->key, key, KEY_LENGTH) == 0) {
-			//todo
-			char* temp = node->value;
-
-			char* newValue = (char*)malloc((strlen(value) + 1) * sizeof(char));
-			if (newValue == NULL) {
-				return NULL;
-			}
-
-			strcpy(newValue, value);
-			node->value = newValue;
-			return temp;
+			replaceFileWithHardLink(node->value, value, forceReplace);
+			return node->value;
 		}
 	}
 
@@ -114,7 +105,6 @@ void* HTRemove(HashTable* hashTable, const uint8_t* key) {
 
 	for (node; node != NULL; node = node->next) {
 		if (memcmp(node->key, key, KEY_LENGTH) == 0) {
-			//todo
 			char* temp = node->value;
 
 			if (prev != NULL) {

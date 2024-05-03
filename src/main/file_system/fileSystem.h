@@ -4,12 +4,14 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include "../options/options.h"
 #include "../hash_table/hashTable.h"
 #include "../hashing/controlSum.h"
 #include "../logging/log.h"
 
-
-
 #define MAX_BUFFER_LEN  (1024)
+
+void processDirectory(HashTable* hashTable, const Options* options);
+void processFile(HashTable* hashTable, const char* pathToFile, int deleteEmptyFiles, int forceReplace);
 
 #endif
