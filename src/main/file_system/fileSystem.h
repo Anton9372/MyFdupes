@@ -11,6 +11,8 @@
 
 #define MAX_BUFFER_LEN  (1024)
 
+extern size_t scannedFilesCounter;
+
 void processDirectory(HashTable* hashTable, const Options* options);
 void processFile(HashTable* hashTable, const char* pathToFile, int deleteEmptyFiles, int forceReplace);
 

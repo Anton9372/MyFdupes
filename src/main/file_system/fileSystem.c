@@ -55,6 +55,8 @@ void processFile(HashTable* hashTable, const char* pathToFile, int deleteEmptyFi
         return;
     }
 
+    scannedFilesCounter++;
+
     fseek(file, 0, SEEK_END);
     size_t fileSize = ftell(file);
     fseek(file, 0, SEEK_SET);

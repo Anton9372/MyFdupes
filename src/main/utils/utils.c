@@ -9,6 +9,7 @@ void createHardLink(const char* pathToFile, const char* pathToLink) {
 
     if (link(pathToFile, pathToLink) == 0) {
         logMessage(INFO_, "%s%s --> %s\n", HARD_LINK_CREATE_SUCCESS, pathToLink, pathToFile);
+        createdHardLinksCounter++;
     } else {
         logMessage(ERROR_, "%s%s", HARD_LINK_CREATE_ERROR, strerror(errno));
     }

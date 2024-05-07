@@ -17,6 +17,8 @@
 #define FILE_DELETING_ERROR "Error deleting file: "
 #define FILE_IS_NOT_A_REGULAR_FILE_ERROR "File is not a regular file and cannot be deleted: "
 
+extern size_t createdHardLinksCounter;
+
 void createHardLink(const char* pathToFile, const char* pathToLink);
 void deleteFile(const char* filePath);
 void replaceFileWithHardLink(const char* pathToFile, const char* pathToFileDuplicate, int forceReplace);

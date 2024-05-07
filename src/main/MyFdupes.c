@@ -14,6 +14,9 @@
     1610612736, 2147483629
 */
 
+size_t scannedFilesCounter = 0;
+size_t createdHardLinksCounter = 0;
+
 int main(int argc, char** argv) {
     
     Options* options = processCmdArguments(argc, argv);
@@ -37,6 +40,9 @@ int main(int argc, char** argv) {
 
     optionsDestructor(options);
     HTDestructor(hashTable);
+
+    printf("Files scanned: %d\n", scannedFilesCounter);
+    printf("Duplicates deleted: %d\n", createdHardLinksCounter);
 
     return 0;
 }
